@@ -1,0 +1,64 @@
+version: '3.1'
+
+services:
+  weather_notification_db:
+    image: mysql:latest
+    expose:
+      - 3307
+    ports:
+      - 3307:3307
+    environment:
+      MYSQL_TCP_PORT: 3307
+      MYSQL_DATABASE: weather_notification
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123
+      MYSQL_ROOT_PASSWORD: 123
+    volumes:
+      - ./weather_notification_db:/var/lib/mysql
+
+  weather_notification_redis:
+    image: redis:latest
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+    volumes:
+      - ./weather_notification_redis:/data
+
+  kafka:
+    image: bitnami/kafka:3.1.0
+    container_name: kafka
+    command:
+      - 'sh'
+      - '-c'
+      - '/opt/bitnami/scripts/kafka/setup.sh && kafka-storage.sh format --config "$${KAFKA_CONF_FILE}" --cluster-id "lkorDA4qT6W1K_dk0LHvtg" --ignore-formatted  && /opt/bitnami/scripts/kafka/run.sh' # Kraft specific initialise
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LOG_DIRS=/tmp/logs
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,INTERNAL://:9094
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092,INTERNAL://kafka:9094
+    ports:
+      - "0.0.0.0:9092:9092"
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    restart: "always"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: "lkorDA4qT6W1K_dk0LHvtg"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9094
+    depends_on:
+      - kafka
+volumes:
+  weather_notification_db:
+    driver: local
+  weather_notification_redis:
+    driver: local
