@@ -16,11 +16,20 @@ func RegisterNotificationScheduleDAOs() {
 	registry.Register(DAOKeys.CityDAO, infra_daos.NewCityMySQLDAO(
 		registry.Inject("Database").(infra_database.Database),
 	))
+
+	registry.Register(DAOKeys.NotificationDAO, infra_daos.NewNotificationMySQLDAO(
+		registry.Inject("Database").(infra_database.Database),
+	))
 }
 
 type daosKeys struct {
 	ScheduledNotificationDAO string
 	CityDAO                  string
+	NotificationDAO          string
 }
 
-var DAOKeys = daosKeys{ScheduledNotificationDAO: "ScheduledNotificationDAO", CityDAO: "CityDAO"}
+var DAOKeys = daosKeys{
+	ScheduledNotificationDAO: "ScheduledNotificationDAO",
+	CityDAO:                  "CityDAO",
+	NotificationDAO:          "NotificationDAO",
+}

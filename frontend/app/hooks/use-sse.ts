@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useToast } from '~/components/ui/use-toast';
 
 export function useSSE<Payload extends Record<string, unknown>>(
-  url: string
+  url: string,
+  previousNotifications: Array<Message<Payload>>
 ): Message<Payload>[] {
-  const [messages, setMessages] = useState<Message<Payload>[]>([]);
+  const [messages, setMessages] = useState<Message<Payload>[]>(previousNotifications);
+
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!url) return;
@@ -14,7 +18,7 @@ export function useSSE<Payload extends Record<string, unknown>>(
 
     source.onmessage = (event) => {
       const message = JSON.parse(event.data) as Message<Payload>;
-      console.log(message);
+      toast({ description: 'Nova notificação de clima', title: 'Aviso' });
       setMessages((prevState) => [message, ...prevState]);
     };
 

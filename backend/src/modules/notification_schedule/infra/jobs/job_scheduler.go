@@ -1,7 +1,7 @@
 package infra_jobs
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/robfig/cron"
 )
@@ -12,10 +12,10 @@ func (jobScheduler JobScheduler) Schedule(jobName string, spec string, job Job) 
 	cronJob := cron.New()
 
 	cronJob.AddFunc(spec, func() {
-		result := job.Handle()
+		err := job.Handle()
 
-		if result != nil {
-			fmt.Println(result.Error())
+		if err != nil {
+			log.Fatal(err.Error())
 		}
 	})
 

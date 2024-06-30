@@ -43,4 +43,14 @@ CREATE TABLE topic_partition_offset (
   topic VARCHAR(100),
   offset INT,
   last_offset INT
-)
+);
+
+CREATE TABLE notification (
+  id VARCHAR(24) PRIMARY KEY,
+  payload JSON NOT NULL,
+  account_id VARCHAR(24) NOT NULL,
+  seen BOOL NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_account_id (account_id),
+  FOREIGN KEY (account_id) REFERENCES account(id) ON DELETE CASCADE
+);

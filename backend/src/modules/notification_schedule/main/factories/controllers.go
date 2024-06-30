@@ -20,6 +20,7 @@ func NewScheduleController() schedule_controller.ScheduleController {
 		registry.Inject(notification_registry_pattern.NotificationServiceKeys.DeactivateWeatherNotificationSchedule).(notification_schedule_services.DeactivateWeatherNotificationScheduleService),
 		registry.Inject(notification_registry_pattern.NotificationServiceKeys.ActivateWeatherNotificationSchedule).(notification_schedule_services.ActivateWeatherNotificationScheduleService),
 		registry.Inject(notification_registry_pattern.NotificationServiceKeys.ListAccountWeatherNotificationSchedules).(notification_schedule_query.ListAccountWeatherNotificationsService),
+		registry.Inject(notification_registry_pattern.NotificationServiceKeys.ListAccountNotifications).(notification_schedule_query.ListAccountNotifications),
 	)
 }
 

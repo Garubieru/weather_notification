@@ -2,7 +2,6 @@ package auth_application_service
 
 import (
 	"errors"
-	"fmt"
 	"weather_notification/src/modules/auth/domain/entities"
 	"weather_notification/src/modules/auth/domain/repositories"
 	services "weather_notification/src/modules/auth/domain/services"
@@ -20,7 +19,6 @@ func (service *LoginServiceImp) Execute(input LoginServiceInput) application_ser
 	account, err := service.accountRepository.FindByUsername(input.Username)
 
 	if err != nil {
-		fmt.Println(err)
 		return application_service.Output[LoginServiceOutput]{Error: application_error.NewRepositoryError("AccountRepository"), Result: nil}
 	}
 

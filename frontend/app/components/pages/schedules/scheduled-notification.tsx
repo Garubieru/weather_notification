@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Badge } from '~/components/ui/badge';
 import {
   Card,
@@ -7,11 +8,31 @@ import {
   CardTitle,
 } from '~/components/ui/card';
 import { Switch } from '~/components/ui/switch';
+import { useToast } from '~/components/ui/use-toast';
 import { parseDate } from '~/lib/date';
 
 export function ScheduledNotification(
   props: ScheduledNotificationProps
 ): JSX.Element {
+  const [active, setIsActive] = useState(props.active);
+  const { toast } = useToast();
+
+  async function handleToggleNotification(): Promise<void> {
+    const response = await fetch(
+      `http://localhost:3000/v1/account/schedules/${props.id}`,
+      { credentials: 'include', method: active ? 'DELETE' : 'PATCH' }
+    );
+
+    if (response.status !== 200) {
+      toast({
+        title: `Erro ao ${active ? 'desativar' : 'ativar'} a notificação`,
+      });
+      return;
+    }
+
+    setIsActive((active) => !active);
+  }
+
   return (
     <Card className="relative">
       <CardHeader>
@@ -26,8 +47,13 @@ export function ScheduledNotification(
           Intervalo: {props.intervalInDays} dias
         </Badge>
         {props.city.isCoastal && <Badge className="text-sm">Litorânea</Badge>}
+
         <div className="absolute right-4 top-4">
-          <Switch id={`${props.id}-toggle`} checked={props.active} />
+          <Switch
+            id={`${props.id}-toggle`}
+            checked={active}
+            onClick={handleToggleNotification}
+          />
         </div>
       </CardContent>
     </Card>

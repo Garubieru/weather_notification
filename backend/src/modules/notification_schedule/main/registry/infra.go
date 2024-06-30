@@ -15,7 +15,7 @@ func RegisterInfra(ctx context.Context) {
 	registry := registry.GetRegistryInstance()
 
 	redisClient := *redis.NewClient(&redis.Options{
-		Addr: "127.0.0.1:6379",
+		Addr: "localhost:6379",
 	})
 
 	registry.Register(InfraKeys.RedisClient, redisClient)
@@ -31,10 +31,15 @@ func RegisterInfra(ctx context.Context) {
 	redisAccountBroker := infra_event.NewRedisAccountNotificationBroker(
 		redisClient,
 		context.WithoutCancel(ctx),
+		registry.Inject("Database").(infra_database.Database),
 	)
 
 	sendNotificationHandler := event_handlers.NewSendAccountWeatherNotification(
-		infra_gateways.CPTECWeatherGateway{},
+		infra_gateways.NewCPTECWeatherGateway(
+			"http://servicos.cptec.inpe.br/XML",
+			redisClient,
+			context.WithoutCancel(ctx),
+		),
 		redisAccountBroker,
 	)
 

@@ -3,6 +3,7 @@ package event_handlers
 import (
 	"encoding/json"
 	"errors"
+	"time"
 	notification_schedule_daos "weather_notification/src/modules/notification_schedule/application/daos"
 	notification_schedule_events "weather_notification/src/modules/notification_schedule/application/events"
 	"weather_notification/src/modules/notification_schedule/application/gateways"
@@ -23,17 +24,22 @@ func (handler SendAccountWeatherNotification) Handle(message []byte) error {
 		return ErrEventHandlerParseData
 	}
 
-	predictions, err := handler.weatherGateway.GetPrediction(4, messageData.City.ExternalId, messageData.IsCoastalCity)
+	prediction, err := handler.weatherGateway.GetPrediction(4, messageData.City.ExternalId, messageData.IsCoastalCity)
 
 	if err != nil {
 		return ErrEventHandlerUnavailable
 	}
 
+	hoursToAdd := time.Duration(messageData.IntervalInDays) * 24 * time.Hour
+	nextScheduledDate := messageData.ScheduledDate.Add(hoursToAdd)
+
 	event := notification_schedule_events.NewAccountNotificationEvent(notification_schedule_events.AccountNotificationPayload{
-		AccountId:     messageData.AccountId,
-		CityName:      messageData.City.Name,
-		CityStateCode: messageData.City.StateCode,
-		Predictions:   predictions,
+		AccountId:         messageData.AccountId,
+		CityName:          messageData.City.Name,
+		CityStateCode:     messageData.City.StateCode,
+		ScheduleId:        messageData.Id,
+		NextScheduledDate: nextScheduledDate,
+		Prediction:        *prediction,
 	})
 
 	if emitError := handler.eventBroker.Emit(event); emitError != nil {

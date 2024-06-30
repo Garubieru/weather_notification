@@ -28,7 +28,6 @@ func main() {
 	}
 
 	contentType := response.Header.Get("Content-Type")
-	fmt.Println(contentType)
 
 	charsetReader, err := charset.NewReader(response.Body, contentType)
 

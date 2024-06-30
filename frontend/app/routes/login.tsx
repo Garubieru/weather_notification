@@ -68,7 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   switch (response.status) {
     case 200: {
-      return redirect('/schedules', { headers: response.headers });
+      return redirect('/schedules/list', { headers: response.headers });
     }
     case 400: {
       const data = (await response.json()) as ApiError;

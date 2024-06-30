@@ -115,7 +115,7 @@ func (broker KafkaEventBroker) Listen() {
 
 			for _, handler := range broker.handlers[broker.topic] {
 				if err := handler(m.Value); err != nil {
-					// Send to DLQ
+					fmt.Println(err)
 					continue
 				}
 			}

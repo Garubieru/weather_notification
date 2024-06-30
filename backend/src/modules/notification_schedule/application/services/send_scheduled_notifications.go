@@ -20,6 +20,10 @@ func (service SendScheduledNotification) Execute() error {
 		return errors.New("could not query for notifications")
 	}
 
+	if len(notifications) == 0 {
+		return nil
+	}
+
 	if err := service.eventBroker.Emit(notification_schedule_events.NewScheduledNotificationsEvent(notifications)); err != nil {
 		return errors.New("could not send notifications")
 	}

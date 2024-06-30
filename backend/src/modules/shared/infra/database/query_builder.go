@@ -10,6 +10,7 @@ type QueryBuilder struct {
 	columns []string
 	where   string
 	joins   []string
+	orderBy *string
 }
 
 func (queryBuilder *QueryBuilder) SetColumns(columns []string) *QueryBuilder {
@@ -23,6 +24,12 @@ func (queryBuilder *QueryBuilder) Join(join string) *QueryBuilder {
 	return queryBuilder
 }
 
+func (queryBuilder *QueryBuilder) OrderBy(orderBy string) *QueryBuilder {
+	queryBuilder.orderBy = &orderBy
+
+	return queryBuilder
+}
+
 func (queryBuilder *QueryBuilder) Select() string {
 	output := fmt.Sprintf("SELECT %s FROM %s ", strings.Join(queryBuilder.columns, ", "), queryBuilder.table)
 
@@ -31,6 +38,10 @@ func (queryBuilder *QueryBuilder) Select() string {
 	}
 
 	output += fmt.Sprintf("WHERE %s", queryBuilder.where)
+
+	if queryBuilder.orderBy != nil {
+		output += fmt.Sprintf(" ORDER BY %s", *queryBuilder.orderBy)
+	}
 
 	return output
 }

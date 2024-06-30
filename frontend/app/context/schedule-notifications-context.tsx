@@ -1,6 +1,6 @@
 import { createContext } from 'react';
-import { ScheduledNotification } from '~/routes/schedules';
+import { UserSession } from '~/utils/auth.server';
 
-export const ScheduleNotificationsContext = createContext<{
-  notifications: ScheduledNotification[];
-}>({ notifications: [] });
+export const UserContext = createContext<{
+  user?: UserSession;
+}>({});

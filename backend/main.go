@@ -98,6 +98,13 @@ func main() {
 
 	server.IncludeRoute(infra.IncludeRouteCommand{
 		Method:     "GET",
+		Route:      "/v1/account/notifications",
+		Controller: scheduleController.ListAccountNotifications,
+		Private:    true,
+	})
+
+	server.IncludeRoute(infra.IncludeRouteCommand{
+		Method:     "GET",
 		Route:      "/v1/stream",
 		Controller: streamController.StartStream,
 		Private:    true,

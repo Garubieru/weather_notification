@@ -40,6 +40,12 @@ func RegisterNotificationScheduleServices() {
 			registry.Inject(InfraKeys.KafkaEventBroker).(event_broker.EventBroker),
 		),
 	)
+
+	registry.Register(NotificationServiceKeys.ListAccountNotifications,
+		notification_schedule_query.NewListAccountNotifications(
+			registry.Inject(DAOKeys.NotificationDAO).(notification_schedule_daos.NotificationDAO),
+		),
+	)
 }
 
 type notificationServiceKeys struct {
@@ -48,6 +54,7 @@ type notificationServiceKeys struct {
 	ActivateWeatherNotificationSchedule     string
 	ListAccountWeatherNotificationSchedules string
 	SendScheduledNotifications              string
+	ListAccountNotifications                string
 }
 
 var NotificationServiceKeys = notificationServiceKeys{
@@ -55,4 +62,5 @@ var NotificationServiceKeys = notificationServiceKeys{
 	DeactivateWeatherNotificationSchedule:   "DeactivateWeatherNotificationSchedule",
 	ListAccountWeatherNotificationSchedules: "ListAccountWeatherNotificationSchedules",
 	SendScheduledNotifications:              "SendScheduledNotifications",
+	ListAccountNotifications:                "ListAccountNotifications",
 }

@@ -2,7 +2,6 @@ package notification_schedule_services
 
 import (
 	"errors"
-	"fmt"
 	"time"
 	notification_schedule_daos "weather_notification/src/modules/notification_schedule/application/daos"
 	notification_domain_entities "weather_notification/src/modules/notification_schedule/domain/entities"
@@ -39,8 +38,6 @@ func (service ScheduleNotificationApplicationServiceImp) Execute(input ScheduleN
 	}
 
 	city, err := service.cityDAO.FindById(input.CityId)
-
-	fmt.Println(city, err)
 
 	if err != nil {
 		return application_service.Output[ScheduleNotificationOutputDTO]{

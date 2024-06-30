@@ -14,6 +14,7 @@ type ScheduleController struct {
 	deactivateWeatherNotification           notification_schedule_services.DeactivateWeatherNotificationScheduleService
 	activateWeatherNotification             notification_schedule_services.ActivateWeatherNotificationScheduleService
 	listAccountWeatherNotificationSchedules notification_schedule_query.ListAccountWeatherNotificationsService
+	listAccountNotifications                notification_schedule_query.ListAccountNotifications
 }
 
 func (controller *ScheduleController) Schedule(ctx *gin.Context) {
@@ -110,6 +111,21 @@ func (controller *ScheduleController) ListAccountSchedules(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"scheduledNotifications": response})
 }
 
+func (controller *ScheduleController) ListAccountNotifications(ctx *gin.Context) {
+	accountId := ctx.GetString("AccountId")
+
+	output := controller.listAccountNotifications.Execute(notification_schedule_query.ListAccountNotificationsInputDTO{
+		AccountId: accountId,
+	})
+
+	if output.Error != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": output.Error.Message, "code": output.Error.Name})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"notifications": output.Result.Notifications})
+}
+
 type ScheduleControllerRequest struct {
 	Hour           uint8  `json:"hour"`
 	IntervalInDays uint8  `json:"intervalInDays"`
@@ -139,11 +155,13 @@ func NewScheduleController(
 	deactivateWeatherNotification notification_schedule_services.DeactivateWeatherNotificationScheduleService,
 	activateWeatherNotification notification_schedule_services.ActivateWeatherNotificationScheduleService,
 	listAccountWeatherNotificationSchedules notification_schedule_query.ListAccountWeatherNotificationsService,
+	listAccountNotifications notification_schedule_query.ListAccountNotifications,
 ) *ScheduleController {
 	return &ScheduleController{
 		scheduleWeatherNotification:             scheduleWeatherNotification,
 		deactivateWeatherNotification:           deactivateWeatherNotification,
 		activateWeatherNotification:             activateWeatherNotification,
 		listAccountWeatherNotificationSchedules: listAccountWeatherNotificationSchedules,
+		listAccountNotifications:                listAccountNotifications,
 	}
 }
