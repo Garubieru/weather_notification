@@ -1,7 +1,7 @@
 import { redirect } from '@remix-run/react';
 
 export async function authenticate(request: Request): Promise<UserSession> {
-  const response = await fetch('http://localhost:3000/v1/session', {
+  const response = await fetch(`${process.env.BASE_URL}/v1/session`, {
     credentials: 'include',
     headers: request.headers,
     method: 'GET',

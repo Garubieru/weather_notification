@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"log"
+	"os"
+	"strconv"
 	application_service "weather_notification/src/modules/auth/application/services"
 	"weather_notification/src/modules/auth/infra"
 	controllers_factories "weather_notification/src/modules/auth/main/factories/controllers"
@@ -10,21 +13,41 @@ import (
 	notification_registry_pattern "weather_notification/src/modules/notification_schedule/main/registry"
 	registry "weather_notification/src/modules/shared/infra"
 	infra_database "weather_notification/src/modules/shared/infra/database"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	server := infra.NewServer(3000)
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	serverPort, err := strconv.ParseUint(os.Getenv("SERVER_PORT"), 10, 16)
+
+	if err != nil {
+		log.Fatal("Provide a valid server port number")
+	}
+
+	server := infra.NewServer(int(serverPort))
 
 	context := context.Background()
 
 	registry := registry.GetRegistryInstance()
 
+	port, err := strconv.ParseUint(os.Getenv("DATABASE_PORT"), 10, 16)
+
+	if err != nil {
+		log.Fatal("Provide a valid port number")
+	}
+
 	database := infra_database.NewMySQLDatabase(infra_database.MySQLDatabaseConfig{
-		User:     "user",
-		Password: "123",
-		Name:     "weather_notification",
-		Host:     "localhost",
-		Port:     3307,
+		User:     os.Getenv("DATABASE_USER"),
+		Password: os.Getenv("DATABASE_PASSWORD"),
+		Name:     os.Getenv("DATABASE_NAME"),
+		Host:     os.Getenv("DATABASE_HOST"),
+		Port:     int(port),
 	})
 
 	database.Connect()
@@ -110,6 +133,7 @@ func main() {
 		Private:    true,
 	})
 
-	server.Listen()
+	server.HealthCheck()
 
+	server.Listen()
 }

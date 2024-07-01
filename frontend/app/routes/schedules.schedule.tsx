@@ -81,10 +81,10 @@ export async function action({ request }: ActionFunctionArgs) {
   headers.set('content-type', 'application/json');
   headers.set('cookie', request.headers.get('cookie') as string);
 
-  const response = await fetch('http://localhost:3000/v1/account/schedules', {
+  const response = await fetch(`${process.env.BASE_URL}/v1/account/schedules`, {
     body: JSON.stringify({
       hour: Number(formData.get('hour')),
-      intervalInDays: Number(formData.get('intervalInDays')),
+      intervalInDays: Number(formData.get('interval')),
       cityId: formData.get('city'),
       method: formData.get('method'),
       isCoastalCity: Boolean(Number(formData.get('isCoastal'))),

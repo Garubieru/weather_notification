@@ -5,7 +5,9 @@ export function useSSE<Payload extends Record<string, unknown>>(
   url: string,
   previousNotifications: Array<Message<Payload>>
 ): Message<Payload>[] {
-  const [messages, setMessages] = useState<Message<Payload>[]>(previousNotifications);
+  const [messages, setMessages] = useState<Message<Payload>[]>(
+    previousNotifications
+  );
 
   const { toast } = useToast();
 
@@ -23,11 +25,11 @@ export function useSSE<Payload extends Record<string, unknown>>(
     };
 
     source.onopen = (event) => {
-      console.log('connected', event);
+      console.log('Connected', event);
     };
 
     source.onerror = (err) => {
-      console.log('Coguld not connect to SSE', err);
+      console.log('Could not connect to SSE', err);
       source.close();
     };
 

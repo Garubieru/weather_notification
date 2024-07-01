@@ -2,6 +2,9 @@ package notification_registry_pattern
 
 import (
 	"context"
+	"log"
+	"os"
+	"strconv"
 	"weather_notification/src/modules/notification_schedule/application/event_handlers"
 	infra_event "weather_notification/src/modules/notification_schedule/infra/event"
 	infra_gateways "weather_notification/src/modules/notification_schedule/infra/gateways"
@@ -14,18 +17,29 @@ import (
 func RegisterInfra(ctx context.Context) {
 	registry := registry.GetRegistryInstance()
 
+	redisHost := os.Getenv("REDIS_ADDR")
+
 	redisClient := *redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
+		Addr: redisHost,
 	})
 
 	registry.Register(InfraKeys.RedisClient, redisClient)
 
-	kafkaBroker := infra_event.NewKafkaEventBroker(
-		"schedule_weather_notification",
-		0,
-		"localhost:9092",
-		context.WithoutCancel(ctx),
-		registry.Inject("Database").(infra_database.Database),
+	kafkaTopic := os.Getenv("KAKFA_TOPIC")
+	kafkaHost := os.Getenv("KAFKA_HOST")
+	kafkaPartition, err := strconv.ParseUint(os.Getenv("KAKFA_PARTITION"), 10, 8)
+
+	if err != nil {
+		log.Fatal("Provide a valid partition")
+	}
+
+	kafkaBroker := infra_event.NewKafkaEventBroker(infra_event.KafkaEventBrokerConfig{
+		Topic:     kafkaTopic,
+		Partition: int(kafkaPartition),
+		Host:      kafkaHost,
+		Context:   context.WithoutCancel(ctx),
+		Database:  registry.Inject("Database").(infra_database.Database),
+	},
 	)
 
 	redisAccountBroker := infra_event.NewRedisAccountNotificationBroker(
@@ -36,7 +50,7 @@ func RegisterInfra(ctx context.Context) {
 
 	sendNotificationHandler := event_handlers.NewSendAccountWeatherNotification(
 		infra_gateways.NewCPTECWeatherGateway(
-			"http://servicos.cptec.inpe.br/XML",
+			os.Getenv("WEATHER_API"),
 			redisClient,
 			context.WithoutCancel(ctx),
 		),

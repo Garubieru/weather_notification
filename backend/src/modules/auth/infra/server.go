@@ -25,6 +25,12 @@ func (server *Server) Listen() {
 	server.Client.Run(fmt.Sprintf(":%d", server.Port))
 }
 
+func (server *Server) HealthCheck() {
+	server.Client.Handle("GET", "/health-check", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{"running": true})
+	})
+}
+
 func (server *Server) IncludeRoute(command IncludeRouteCommand) {
 	if !command.Private {
 		server.Client.Handle(command.Method, command.Route, func(ctx *gin.Context) {

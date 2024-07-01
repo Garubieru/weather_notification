@@ -115,6 +115,7 @@ func (broker KafkaEventBroker) Listen() {
 
 			for _, handler := range broker.handlers[broker.topic] {
 				if err := handler(m.Value); err != nil {
+					//TODO: Put in DLQ
 					fmt.Println(err)
 					continue
 				}
@@ -141,8 +142,8 @@ func (broker KafkaEventBroker) Listen() {
 
 }
 
-func NewKafkaEventBroker(topic string, partition int, host string, context context.Context, database infra_database.Database) KafkaEventBroker {
-	conn, err := kafka.DialLeader(context, "tcp", host, topic, partition)
+func NewKafkaEventBroker(config KafkaEventBrokerConfig) KafkaEventBroker {
+	conn, err := kafka.DialLeader(config.Context, "tcp", config.Host, config.Topic, config.Partition)
 
 	if err != nil {
 		log.Fatal("failed to connect to kafka", err)
@@ -151,10 +152,18 @@ func NewKafkaEventBroker(topic string, partition int, host string, context conte
 	return KafkaEventBroker{
 		kafkaConn: conn,
 		handlers:  make(map[string][]func(message []byte) error),
-		topic:     topic,
-		context:   context,
-		partition: partition,
-		host:      []string{host},
-		database:  database,
+		topic:     config.Topic,
+		context:   config.Context,
+		partition: config.Partition,
+		host:      []string{config.Host},
+		database:  config.Database,
 	}
+}
+
+type KafkaEventBrokerConfig struct {
+	Topic     string
+	Partition int
+	Host      string
+	Context   context.Context
+	Database  infra_database.Database
 }

@@ -54,3 +54,4 @@ CREATE TABLE notification (
   INDEX idx_account_id (account_id),
   FOREIGN KEY (account_id) REFERENCES account(id) ON DELETE CASCADE
 );
+

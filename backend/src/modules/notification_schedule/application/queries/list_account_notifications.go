@@ -1,7 +1,6 @@
 package notification_schedule_query
 
 import (
-	"fmt"
 	notification_schedule_daos "weather_notification/src/modules/notification_schedule/application/daos"
 	application_service "weather_notification/src/modules/shared/application"
 	application_error "weather_notification/src/modules/shared/application/errors"
@@ -19,7 +18,6 @@ func (service ListAccountNotificationsImp) Execute(input ListAccountNotification
 	notifications, err := service.notificationDAO.FindNotifications(input.AccountId)
 
 	if err != nil {
-		fmt.Println()
 		return application_service.Output[ListAccountNotificationsOutputDTO]{
 			Error: &application_error.ApplicationError{
 				Message: "could no query notifications",

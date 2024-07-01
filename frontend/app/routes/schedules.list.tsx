@@ -11,7 +11,7 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const response = await fetch('http://localhost:3000/v1/account/schedules', {
+  const response = await fetch(`${process.env.BASE_URL}/v1/account/schedules`, {
     method: 'GET',
     headers: request.headers,
   });
@@ -20,16 +20,17 @@ export async function loader({ request }: LoaderFunctionArgs) {
     .scheduledNotifications as ScheduledNotification[];
 
   if (response.status !== 200) {
-    return { scheduledNotifications: [] };
+    return { scheduledNotifications: [], baseUrl: process.env.BASE_URL };
   }
 
   return {
     scheduledNotifications: notifications,
+    baseUrl: process.env.BASE_URL,
   };
 }
 
 export default function List() {
-  const { scheduledNotifications } = useLoaderData<typeof loader>();
+  const { scheduledNotifications, baseUrl } = useLoaderData<typeof loader>();
 
   return (
     <CardContent className="flex flex-col gap-2 pt-6">
@@ -37,6 +38,7 @@ export default function List() {
 
       {scheduledNotifications.map((scheduledNotification) => (
         <ScheduledNotification
+          baseUrl={baseUrl as string}
           key={scheduledNotification.id}
           {...scheduledNotification}
         />

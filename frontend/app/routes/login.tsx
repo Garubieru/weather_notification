@@ -1,7 +1,6 @@
-import type { MetaFunction } from '@remix-run/node';
-import { Form, redirect, useActionData } from '@remix-run/react';
+import type { ActionFunctionArgs, MetaFunction } from '@remix-run/node';
+import { Form, json, redirect, useActionData } from '@remix-run/react';
 import { AlertCircle } from 'lucide-react';
-import { ActionFunctionArgs, json } from 'react-router';
 import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
 import { Button } from '~/components/ui/button';
 import {
@@ -55,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const headers = new Headers();
   headers.set('content-type', 'application/json');
 
-  const response = await fetch('http://localhost:3000/v1/login', {
+  const response = await fetch(`${process.env.BASE_URL}/v1/login`, {
     cache: 'no-cache',
     method: 'POST',
     headers,

@@ -19,7 +19,7 @@ export function ScheduledNotification(
 
   async function handleToggleNotification(): Promise<void> {
     const response = await fetch(
-      `http://localhost:3000/v1/account/schedules/${props.id}`,
+      `${props.baseUrl}/v1/account/schedules/${props.id}`,
       { credentials: 'include', method: active ? 'DELETE' : 'PATCH' }
     );
 
@@ -72,4 +72,5 @@ type ScheduledNotificationProps = {
     stateCode: string;
     isCoastal: boolean;
   };
+  baseUrl: string;
 };

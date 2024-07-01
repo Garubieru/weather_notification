@@ -15,7 +15,7 @@ export const meta: MetaFunction = () => {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const response = await fetch(
-    'http://localhost:3000/v1/account/notifications',
+    `${process.env.BASE_URL}/v1/account/notifications`,
     { headers: request.headers }
   );
 
@@ -28,16 +28,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
   >;
 
   return {
-    sseUrl: 'http://localhost:3000/v1/stream',
+    baseUrl: process.env.BASE_URL,
     notifications,
   };
 }
 
 export default function List() {
-  const { sseUrl, notifications } = useLoaderData<typeof loader>();
+  const { baseUrl, notifications } = useLoaderData<typeof loader>();
 
   const newNotifications = useSSE<WeatherNotificationContent>(
-    sseUrl,
+    `${baseUrl}/v1/stream`,
     notifications
   );
 

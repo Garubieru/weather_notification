@@ -13,8 +13,12 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: 123
       MYSQL_ROOT_PASSWORD: 123
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
     volumes:
-      - ./weather_notification_db:/var/lib/mysql
+      - db_volume:/var/lib/mysql
+      - ./backend/src/modules/shared/infra/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/src/modules/shared/infra/database/seed.sql:/docker-entrypoint-initdb.d/seed.sql
 
   weather_notification_redis:
     image: redis:latest
@@ -23,15 +27,20 @@ services:
     ports:
       - 6379:6379
     volumes:
-      - ./weather_notification_redis:/data
+      - redis_volume:/data
 
   kafka:
     image: bitnami/kafka:3.1.0
-    container_name: kafka
     command:
       - 'sh'
       - '-c'
-      - '/opt/bitnami/scripts/kafka/setup.sh && kafka-storage.sh format --config "$${KAFKA_CONF_FILE}" --cluster-id "lkorDA4qT6W1K_dk0LHvtg" --ignore-formatted  && /opt/bitnami/scripts/kafka/run.sh' # Kraft specific initialise
+      - |
+        /opt/bitnami/scripts/kafka/setup.sh && \
+        kafka-storage.sh format --config "$${KAFKA_CONF_FILE}" --cluster-id "lkorDA4qT6W1K_dk0LHvtg" --ignore-formatted && \
+        /opt/bitnami/scripts/kafka/run.sh &
+        sleep 10 && \
+        kafka-topics.sh --create --topic schedule_weather_notification --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 && \
+        tail -f /dev/null
     environment:
       - ALLOW_PLAINTEXT_LISTENER=yes
       - KAFKA_CFG_NODE_ID=1
@@ -45,10 +54,21 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092,INTERNAL://kafka:9094
     ports:
       - "0.0.0.0:9092:9092"
+    expose:
+      - 9092
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "kafka-topics.sh",
+          "--bootstrap-server=kafka:9092",
+          "--list"
+        ]
+      start_period: 15s
+      interval: 10s
 
   kafka-ui:
     image: provectuslabs/kafka-ui
-    container_name: kafka-ui
     ports:
       - "8080:8080"
     restart: "always"
@@ -57,8 +77,9 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9094
     depends_on:
       - kafka
+
 volumes:
-  weather_notification_db:
+  db_volume:
     driver: local
-  weather_notification_redis:
+  redis_volume:
     driver: local
