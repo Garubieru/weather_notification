@@ -7,8 +7,8 @@
 ---
 
 1. Instale as dependências com `chmod +x ./install.sh && ./install.sh`
-3. Na raiz, Inicie os containers com `docker compose up -d` e espere os containers subirem
-4. Inicie a aplicação com `chmod +x ./start.sh && ./start.sh`
+2. Na raiz, Inicie os containers com `docker compose up -d` e espere os containers subirem
+3. Inicie a aplicação com `chmod +x ./start.sh && ./start.sh`
 
 ## Tecnologias
 
@@ -105,3 +105,12 @@ Banco:
 - `DELETE /v1/account/schedules/:id` - Desativa uma notificação agendada
 
 - `PATCH /v1/account/schedules/:id` - Ativa uam notificação agendada
+
+### Frontend
+
+- As rotas do frontend consistem em:
+  - `/login`: Tela básica de usuário e senha
+  - `/schedules/list`: View que informa as notificações agendadas do usuário
+  - `/schedules/notifications`: Tela responsável por abrir a conexão SSE e streamer notificações de clima para o cliente
+  - `/schedules/schedule`: Tela agendar notificações
+    - Limitação: É necessário do id da cidade no campo cidade.
