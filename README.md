@@ -4,15 +4,11 @@
 
 ## Execute o seguinte script:
 
----
-
 1. Instale as dependências com `chmod +x ./install.sh && ./install.sh`
 2. Na raiz, Inicie os containers com `docker compose up -d` e espere os containers subirem
 3. Inicie a aplicação com `chmod +x ./start.sh && ./start.sh`
 
 ## Tecnologias
-
----
 
 - Kafka
 - Go
@@ -20,8 +16,6 @@
 - Redis
 
 ## Diagramas
-
----
 
 Fluxo:
 
@@ -41,8 +35,6 @@ Banco:
 ![alt text](database.png)
 
 ### Autenticação
-
----
 
 - `/v1/register` - Registra um usuário
 
@@ -80,8 +72,6 @@ Banco:
 ```
 
 ### Sistema de Notificações
-
----
 
 - `GET /v1/account/notifications` - Retorna todas as notificações já enviadas ao usuário na sessão
 
