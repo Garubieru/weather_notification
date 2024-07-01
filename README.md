@@ -17,7 +17,10 @@
 
 ## Diagramas
 
-Fluxo:
+### Arquitetura:
+![alt text](image.png)
+
+### Fluxo:
 
 1. O usuário se conecta com a API por SSE
 2. Um canal de comunicação com o Redis é criado
@@ -30,7 +33,7 @@ Fluxo:
 
 ![alt text](diagram.png)
 
-Banco:
+### Banco (alto nível):
 
 ![alt text](database.png)
 
@@ -77,7 +80,7 @@ Banco:
 
 - `GET /v1/stream` - Conecta-se ao servidor para receber eventos via SSE
 
-- `POST /v1/account/schedules` - Agenda uma notificação
+- `POST /v1/account/schedules` - Agenda uma notificação por hora, intervalo, cidade e método.
 
 ```json
 // Body
@@ -101,6 +104,6 @@ Banco:
 - As rotas do frontend consistem em:
   - `/login`: Tela básica de usuário e senha
   - `/schedules/list`: View que informa as notificações agendadas do usuário
-  - `/schedules/notifications`: Tela responsável por abrir a conexão SSE e streamer notificações de clima para o cliente
-  - `/schedules/schedule`: Tela agendar notificações
+  - `/schedules/notifications`: Tela responsável por abrir a conexão SSE e streamar notificações de clima para o cliente
+  - `/schedules/schedule`: Tela agendar notificações para uma determinada cidade, em um intervalo e uma hora
     - Limitação: É necessário do id da cidade no campo cidade.
