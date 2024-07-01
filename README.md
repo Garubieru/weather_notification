@@ -52,6 +52,18 @@
 }
 ```
 
+```sh
+curl --request POST \
+  --url http://localhost:8001/v1/register \
+  --data '{
+  "name": "name",
+  "username": "username",
+  "password": "password",
+  "email": "any_email@gmail.com",
+  "phone": "(11)1111-1111"
+}'
+```
+
 - `/v1/login` - Autentica um usuário
   - Resposta: Popula nos cookies o id da sessão do usuário
 
