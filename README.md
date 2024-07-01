@@ -17,25 +17,25 @@
 
 ## Diagramas
 
+### Requisitos
+![alt text](./md/requirements.png)
+
 ### Arquitetura:
-![alt text](image.png)
+![alt text](./md/image.png)
 
 ### Fluxo:
 
-1. O usuário se conecta com a API por SSE
-2. Um canal de comunicação com o Redis é criado
-3. Um CRON JOB realiza o pooling de mensagems agendadas
-4. O cron job envia as mensagens agendadas para o broker do kafka
-5. As mensagens são processadas por um handler definido no sistema. Além disso, messagens não processadas devem ser enviadas para um DLQ
-6. Mensagens processadas são salvas no banco e a data da próxima notificação é calculada
-7. Por fim, o broker envia para o canal da conta do usuário no Redis a mensagem
-8. Caso o usuário estiver conectado, a mensagem é exibida no frontend.
+1. O usuário se conecta com a API utilizando SSE (Server-Sent Events) e um canal de comunicação exclusivo do usuário é criado no Redis para envio de mensagens em tempo real.
+2. Um CRON JOB realiza o pooling de mensagems agendadas e envia as mensagens agendadas para o broker do Kafka.
+4. O handler de mensagens para o tópico de notificações agendadas do Kafka, chama a API de Clima do CPTEC, salva a notificação no banco e calcula a data da próxima notificação.
+5. Por fim, o broker envia para o canal da conta do usuário no Redis a mensagem.
+6. Caso o usuário estiver conectado, a mensagem é exibida no frontend.
 
-![alt text](diagram.png)
+![alt text](./md/diagram.png)
 
 ### Banco (alto nível):
 
-![alt text](database.png)
+![alt text](./md/database.png)
 
 ### Autenticação
 
