@@ -1,2 +1,2 @@
 cd ./backend && go run . &
-cd ./frontend && pnpm dev
+cd ./frontend && bun dev

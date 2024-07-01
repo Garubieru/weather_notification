@@ -4,9 +4,10 @@
 
 ## Execute o seguinte script:
 
-1. Instale as dependências com `chmod +x ./install.sh && ./install.sh`
-2. Na raiz, Inicie os containers com `docker compose up -d` e espere os containers subirem
-3. Inicie a aplicação com `chmod +x ./start.sh && ./start.sh`
+1. Instale o bun com `curl -fsSL https://bun.sh/install | bash`
+2. Instale as dependências com `chmod +x ./install.sh && ./install.sh` (Backend - Go, Frontend - Bun)
+3. Na raiz, Inicie os containers com `docker compose up -d` e espere os containers subirem
+4. Inicie a aplicação com `chmod +x ./start.sh && ./start.sh`
 
 ## Tecnologias
 

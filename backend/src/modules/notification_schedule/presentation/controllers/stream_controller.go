@@ -17,33 +17,6 @@ type StreamController struct {
 func (controller *StreamController) StartStream(c *gin.Context) {
 	controller.setSSEHeaders(c)
 
-	// c.Stream(func(w io.Writer) bool {
-	// 	accountChannel := fmt.Sprintf("account_%s", c.GetString("AccountId"))
-
-	// 	sub := controller.redisClient.Subscribe(controller.ctx, accountChannel)
-	// 	_, err := sub.Receive(controller.ctx)
-
-	// 	if err != nil {
-	// 		c.JSON(400, gin.H{"message": "Could not connect"})
-	// 		return false
-	// 	}
-
-	// 	defer sub.Close()
-
-	// 	channel := sub.Channel()
-
-	// 	for msg := range channel {
-	// 		c.SSEvent("message", gin.H{
-	// 			"id":      msg.Payload,
-	// 			"content": msg.Payload,
-	// 			"type":    "wether_prediction",
-	// 		})
-	// 		c.Writer.Flush()
-	// 	}
-
-	// 	return false
-	// })
-
 	c.Stream(func(w io.Writer) bool {
 		err := controller.event_broker.Subscribe(c.GetString("AccountId"), func(message []byte) error {
 			c.SSEvent("message", string(message))
